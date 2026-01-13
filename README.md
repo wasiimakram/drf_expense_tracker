@@ -22,6 +22,11 @@ This project demonstrates modern backend practices including JWT authentication,
 - **Chart Data**: Aggaggregated spending/income by category (perfect for Pie/Bar charts).
 - **Trends**: Month-over-month filtering.
 
+### 🔔 Notifications
+- **Event-Driven**: Automatically generates notifications when important actions occur (e.g., New Expense).
+- **Architecture**: Powered by **Django Signals** (Decoupled logic).
+- **In-App**: Unread badge counts and history list.
+
 ### 🔄 Data Management
 - **Bulk Import**: Upload CSV files to create multiple expenses instantly.
 - **Smart Mapping**: Automatically maps CSV categories by Name or ID.

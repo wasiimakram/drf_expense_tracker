@@ -12,6 +12,7 @@ urlpatterns = [
     path('api/income/', include('income.urls')),
     path('api/auth/', include('authentication.urls')),
     path('api/dashboard/', include('dashboard.urls')),
+    path('api/notifications/', include('notifications.urls')),
     # --- Swagger - Documentation Endpoints (drf-spectacular) ---
     # 1. Schema: Generates the raw OpenAPI JSON file (Machine Readable)
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),

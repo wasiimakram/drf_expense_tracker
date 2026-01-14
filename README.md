@@ -40,6 +40,11 @@ This project demonstrates modern backend practices including JWT authentication,
 - **Swagger UI**: Interactive API testing interface via `drf-spectacular`.
 - **ReDoc**: Clean, organized API reference.
 
+### ⚡ Performance & Architecture
+- **Optimization**: N+1 queries eliminated using `select_related` and `prefetch_related`.
+- **Nested Serialization**: Custom endpoints to view Categories WITH their associated expenses in one shot.
+- **Clean Architecture**: Modular design preventing circular dependencies via Lazy Imports.
+
 ---
 
 ## 🛠️ Technology Stack

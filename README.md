@@ -7,8 +7,12 @@ This project demonstrates modern backend practices including JWT authentication,
 
 ### 🔐 Authentication & Security
 - **JWT Authentication**: Secure stateless auth using `simplejwt` (Login, Register, Refresh).
-- **Security**: Token rotation and blacklisting enabled.
-- **Data Isolation**: Users can ONLY access their own data (Row-level security).
+- **Throttling**: Rate limiting enabled to block brute-force attacks (User, Anon, and Scoped limits).
+- **Role-Based Access Control (RBAC)**:
+    - **Manager**: Read-only global access.
+    - **Admin**: Full control including deletion.
+    - **User**: Private access to own data only.
+- **Data Isolation**: Row-level security powered by custom Mixins.
 - **User Profile**: Self-service profile management.
 
 ### 💸 Core Functionality

@@ -68,31 +68,45 @@ def parse_date(date_str):
 
 class UserQuerySetMixin:
     """
-    Mixin to filter queryset by the current user (owner).
-    Superusers (Admin) can see all records.
-    Also auto-assigns 'owner' field on create.
+    Powerful Mixin to enforce 'Row Level Security' (RLS) in Views.
+    
+    1. get_queryset():
+       - Admins & Managers -> See EVERYTHING (Global View).
+       - Regular Users -> See ONLY their own data (filtered by 'owner').
+    
+    2. perform_create():
+       - Automatically sets the 'owner' field to the current user when creating data.
     """
     user_field = 'owner'
     
     def get_queryset(self):
-        # Ensure we have a queryset from parent
+        # 1. Start with the base queryset (usually Model.objects.all())
         queryset = super().get_queryset()
         
-        # Checking user from request (provided by JWT Auth)
+        # 2. Get the user from the Request
         user = self.request.user
         
-        # Safety check: if user is Anonymous (should be blocked by permission, but good to be safe)
+        # 3. SAFETY FIRST: If user is not logged in, return Nothing.
+        # (Though 'permission_classes' should catch this, we double-check here)
         if not user.is_authenticated:
             return queryset.none()
             
-        # Super Admin sees ALL (Global view)
-        if user.is_staff:
-             return queryset
+        # 4. GLOBAL ACCESS: Check if User acts as an Admin or Manager
+        is_admin = user.is_staff
+        is_manager = user.groups.filter(name='Manager').exists()
+        
+        if is_admin or is_manager:
+            return queryset # Return ALL records in the database
              
-        # Regular users see only their OWN data
-        return queryset.filter(**{self.user_field: user}) # e.g. owner=user
+        # 5. PRIVATE ACCESS: Filter data to belong ONLY to this user
+        # This translates to SQL: WHERE owner_id = user.id
+        filter_kwargs = {self.user_field: user}
+        return queryset.filter(**filter_kwargs)
     
     def perform_create(self, serializer):
-        # Auto-assign the owner field to the logged-in user
+        """
+        Hook called during POST request.
+        Manually injects the 'owner' field using the request.user.
+        """
         serializer.save(**{self.user_field: self.request.user})
 

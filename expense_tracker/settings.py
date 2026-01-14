@@ -159,6 +159,30 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'expense_tracker.utils.custom_exception_handler',
     # Enable AutoSchema for automatic API Documentation generation
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+
+    # --- THROTTLING CONFIGURAITON (Rate Limiting) ---
+    'DEFAULT_THROTTLE_CLASSES': [
+        # 1. ScopedRateThrottle: Applies ONLY if view has 'throttle_scope' property.
+        #    Used for specific endpoints like Login (strict limits).
+        'rest_framework.throttling.ScopedRateThrottle',
+        
+        # 2. AnonRateThrottle: Applies to Unauthenticated users (Guests).
+        #    Protects register/public APIs from spam.
+        'rest_framework.throttling.AnonRateThrottle', 
+        
+        # 3. UserRateThrottle: Applies to Authenticated users.
+        #    Ensures fair usage per user account.
+        'rest_framework.throttling.UserRateThrottle', 
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        # Scoped Limits (Applied by name)
+        'login_attempts': '5/min',   # Strong protection for Login
+        'burst': '60/min',           # Burst limit for general usage
+        
+        # Global Limits (keyword 'anon' and 'user' are special)
+        'anon': '20/min',  # Guests IP limit (e.g. Register page)
+        'user': '100/min', # Logged in User limit (General API usage)
+    }
 }
 
 

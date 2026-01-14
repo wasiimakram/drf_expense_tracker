@@ -3,10 +3,15 @@ from django.contrib.auth.models import User
 from .serializers import RegisterSerializer, CustomTokenObtainPairSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.throttling import ScopedRateThrottle
 from .serializers import UserSerializer
 
 class CustomLoginView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
+
+    # Activate the 'login_attempts' rate defined in settings
+    throttle_classes = [ScopedRateThrottle] 
+    throttle_scope = 'login_attempts'
 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()

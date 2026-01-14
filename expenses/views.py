@@ -8,6 +8,7 @@ from categories.models import Category
 from .serializers import ExpenseSerializer, ExpenseExportSerializer, ExpenseImportSerializer
 from expense_tracker.utils import CustomPagination, parse_date, UserQuerySetMixin
 from .import_export_helper import ExpenseCSVRenderer, process_expense_csv
+from expense_tracker.permissions import IsManagerAdminOrOwner
 
 class ExpenseListAndCreateAPIView(UserQuerySetMixin, generics.ListCreateAPIView):
     """
@@ -24,7 +25,8 @@ class ExpenseListAndCreateAPIView(UserQuerySetMixin, generics.ListCreateAPIView)
     queryset = Expense.objects.all()
     serializer_class = ExpenseSerializer
     pagination_class = CustomPagination
-    permission_classes = [permissions.IsAuthenticated]
+    # Apply Custom Permission: Managers (Read All), Admin (Delete All), Owner (Full Access)
+    permission_classes = [permissions.IsAuthenticated, IsManagerAdminOrOwner]
     
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['category', 'payment_method', 'entry_date']
@@ -50,7 +52,7 @@ class ExpenseDetailAndUpdateAndDeleteAPIView(UserQuerySetMixin, generics.Retriev
     """
     queryset = Expense.objects.all()
     serializer_class = ExpenseSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsManagerAdminOrOwner]
 
 
 class ExpenseExportAPIView(UserQuerySetMixin, generics.ListAPIView):

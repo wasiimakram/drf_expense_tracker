@@ -22,7 +22,8 @@ class ExpenseListAndCreateAPIView(UserQuerySetMixin, generics.ListCreateAPIView)
     - Pagination: Custom (Page size control via query param).
     - Filters: Category, Date, Payment Method.
     """
-    queryset = Expense.objects.all()
+    # Optimization: Use select_related to fetch Category in the same SQL query (Avoid N+1 problem)
+    queryset = Expense.objects.select_related('category').all()
     serializer_class = ExpenseSerializer
     pagination_class = CustomPagination
     # Apply Custom Permission: Managers (Read All), Admin (Delete All), Owner (Full Access)
@@ -50,7 +51,7 @@ class ExpenseDetailAndUpdateAndDeleteAPIView(UserQuerySetMixin, generics.Retriev
     - PUT/PATCH: Update an existing expense.
     - DELETE: Remove an expense.
     """
-    queryset = Expense.objects.all()
+    queryset = Expense.objects.select_related('category').all()
     serializer_class = ExpenseSerializer
     permission_classes = [permissions.IsAuthenticated, IsManagerAdminOrOwner]
 

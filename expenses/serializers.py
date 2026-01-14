@@ -5,6 +5,15 @@ from categories.models import Category
 
 from categories.serializers import CategorySerializer
 
+class ExpenseAgainstCategorySerializer(serializers.ModelSerializer):
+    """
+    Lightweight serializer for embedding Expenses inside other resources (like Categories).
+    Does NOT include nested Category info to avoid circular recursion.
+    """
+    class Meta:
+        model = Expense
+        fields = ['id', 'title', 'amount', 'entry_date']
+
 class ExpenseSerializer(serializers.ModelSerializer):
     """
     Serializer for Expense model.
